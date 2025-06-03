@@ -1,0 +1,80 @@
+@startuml
+left to right direction
+
+class Museu {
+-=nome: string
+-=local: string
+-=descricao: string
+--
++=Cadastrar();
+}
+
+class Obra{
+-=titulo: string
+-=artista: Artista
+-=data: date
+-=descricao: string
+-=tipo: string
+}
+
+class Artista{
+-=nome: string
+-=bio: string
+-=dataNasc: date
+}
+
+class Visitante extends Pessoa{
+-=preferencia: string
+--
++=Cadastrar();
++=ComprarObra();
++=ComprarIngresso();
+}
+
+class Funcionario extends Pessoa{
+-=cargo: string
+--
++=CadastrarObra();
++=ManterObra();
++=Cadastrar();
+}
+
+class Ingresso{
+-=visitante: Visitante
+}
+
+class Feedback{
+-=visitante: Visitante
+-=nota: int
+-=comentario: string
+}
+
+class CompraObras{
+-=obra: Obra
+-=comprador: Visitante
+-=valor: double
+}
+
+class Evento{
+-=nome: string
+-=data: date
+-=local: string
+-=participantes: Visitante
+}
+
+class Pessoa{
+-=nome: string
+-=contato: string
+}
+
+Museu o--> Obra  
+Obra o--> Artista    
+Visitante *--> Ingresso 
+Visitante *--> CompraObras 
+Museu *--> Evento    
+Evento o--> Visitante 
+Funcionario o--> Museu
+Funcionario o--> Obra 
+Visitante *--> Feedback
+
+@enduml
