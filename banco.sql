@@ -1,3 +1,19 @@
+CREATE TABLE Pessoa (
+    id NUMBER(10) NOT NULL,
+    nome VARCHAR2(100) NOT NULL,
+    contato VARCHAR2(100)
+);
+
+CREATE TABLE Visitante (
+    id NUMBER(10) NOT NULL,
+    preferencia VARCHAR2(100)
+);
+
+CREATE TABLE Funcionario (
+    id NUMBER(10) NOT NULL,
+    cargo VARCHAR2(50)
+);
+
 CREATE TABLE Museu (
     id NUMBER(10) NOT NULL,
     nome VARCHAR2(100) NOT NULL,
@@ -8,7 +24,7 @@ CREATE TABLE Museu (
 CREATE TABLE Artista (
     id NUMBER(10) NOT NULL,
     nome VARCHAR2(100) NOT NULL,
-    bio VARCHAR2(4000), 
+    bio VARCHAR2(4000),
     dataNasc DATE
 );
 
@@ -16,23 +32,9 @@ CREATE TABLE Obra (
     id NUMBER(10) NOT NULL,
     titulo VARCHAR2(100) NOT NULL,
     artista_id NUMBER(10) NOT NULL,
-    data_criacao DATE, 
-    descricao VARCHAR2(4000), 
+    data_criacao DATE,
+    descricao VARCHAR2(4000),
     tipo VARCHAR2(50)
-);
-
-CREATE TABLE Visitante (
-    id NUMBER(10) NOT NULL,
-    nome VARCHAR2(100) NOT NULL,
-    contato VARCHAR2(100),
-    preferencia VARCHAR2(100)
-);
-
-CREATE TABLE Funcionario (
-    id NUMBER(10) NOT NULL,
-    nome VARCHAR2(100) NOT NULL,
-    contato VARCHAR2(100),
-    cargo VARCHAR2(50)
 );
 
 CREATE TABLE Ingresso (
@@ -45,21 +47,21 @@ CREATE TABLE CompraObras (
     obra_id NUMBER(10) NOT NULL,
     comprador_id NUMBER(10) NOT NULL,
     id_vendedor NUMBER(10) NOT NULL,
-    valor NUMBER(10, 2) NOT NULL 
+    valor NUMBER(10, 2) NOT NULL
 );
 
 CREATE TABLE Feedback (
     id NUMBER(10) NOT NULL,
     visitante_id NUMBER(10) NOT NULL,
-    nota NUMBER(1) NOT NULL, 
-    comentario VARCHAR2(4000) 
+    nota NUMBER(1) NOT NULL,
+    comentario VARCHAR2(4000)
 );
 
 CREATE TABLE Evento (
     id NUMBER(10) NOT NULL,
     nome VARCHAR2(100) NOT NULL,
-    data_evento DATE NOT NULL, 
-    local_evento VARCHAR2(100), 
+    data_evento DATE NOT NULL,
+    local_evento VARCHAR2(100),
     museu_id NUMBER(10) NOT NULL
 );
 
@@ -68,19 +70,21 @@ CREATE TABLE EventoParticipante (
     visitante_id NUMBER(10) NOT NULL
 );
 
--- Chaves Primárias
+
+ALTER TABLE Pessoa ADD PRIMARY KEY (id);
+ALTER TABLE Visitante ADD PRIMARY KEY (id);
+ALTER TABLE Funcionario ADD PRIMARY KEY (id);
 ALTER TABLE Museu ADD PRIMARY KEY (id);
 ALTER TABLE Artista ADD PRIMARY KEY (id);
 ALTER TABLE Obra ADD PRIMARY KEY (id);
-ALTER TABLE Visitante ADD PRIMARY KEY (id);
-ALTER TABLE Funcionario ADD PRIMARY KEY (id);
 ALTER TABLE Ingresso ADD PRIMARY KEY (id);
 ALTER TABLE CompraObras ADD PRIMARY KEY (id);
 ALTER TABLE Feedback ADD PRIMARY KEY (id);
 ALTER TABLE Evento ADD PRIMARY KEY (id);
 ALTER TABLE EventoParticipante ADD PRIMARY KEY (evento_id, visitante_id);
 
--- Chaves Estrangeiras
+ALTER TABLE Visitante ADD FOREIGN KEY (id) REFERENCES Pessoa(id);
+ALTER TABLE Funcionario ADD FOREIGN KEY (id) REFERENCES Pessoa(id);
 ALTER TABLE Obra ADD FOREIGN KEY (artista_id) REFERENCES Artista(id);
 ALTER TABLE Ingresso ADD FOREIGN KEY (visitante_id) REFERENCES Visitante(id);
 ALTER TABLE CompraObras ADD FOREIGN KEY (obra_id) REFERENCES Obra(id);
@@ -91,7 +95,22 @@ ALTER TABLE Evento ADD FOREIGN KEY (museu_id) REFERENCES Museu(id);
 ALTER TABLE EventoParticipante ADD FOREIGN KEY (evento_id) REFERENCES Evento(id);
 ALTER TABLE EventoParticipante ADD FOREIGN KEY (visitante_id) REFERENCES Visitante(id);
 
--- Sequências para Auto-Incremento
+
+CREATE SEQUENCE pessoa_seq
+INCREMENT BY 1
+START WITH 1
+NOMAXVALUE
+NOCACHE
+NOCYCLE
+ORDER;
+
+CREATE TRIGGER pessoa_trig
+BEFORE INSERT ON Pessoa FOR EACH ROW
+BEGIN
+:NEW.id := pessoa_seq.NEXTVAL;
+END;
+/
+
 CREATE SEQUENCE museu_seq
 INCREMENT BY 1
 START WITH 1
@@ -134,36 +153,6 @@ CREATE TRIGGER obra_trig
 BEFORE INSERT ON Obra FOR EACH ROW
 BEGIN
 :NEW.id := obra_seq.NEXTVAL;
-END;
-/
-
-CREATE SEQUENCE visitante_seq
-INCREMENT BY 1
-START WITH 1
-NOMAXVALUE
-NOCACHE
-NOCYCLE
-ORDER;
-
-CREATE TRIGGER visitante_trig
-BEFORE INSERT ON Visitante FOR EACH ROW
-BEGIN
-:NEW.id := visitante_seq.NEXTVAL;
-END;
-/
-
-CREATE SEQUENCE funcionario_seq
-INCREMENT BY 1
-START WITH 1
-NOMAXVALUE
-NOCACHE
-NOCYCLE
-ORDER;
-
-CREATE TRIGGER funcionario_trig
-BEFORE INSERT ON Funcionario FOR EACH ROW
-BEGIN
-:NEW.id := funcionario_seq.NEXTVAL;
 END;
 /
 
