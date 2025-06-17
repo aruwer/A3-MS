@@ -1,4 +1,3 @@
--- Tabelas
 CREATE TABLE Museu (
     id NUMBER(10) NOT NULL,
     nome VARCHAR2(100) NOT NULL,
@@ -9,7 +8,7 @@ CREATE TABLE Museu (
 CREATE TABLE Artista (
     id NUMBER(10) NOT NULL,
     nome VARCHAR2(100) NOT NULL,
-    bio VARCHAR2(4000), -- Aumentei para permitir biografias mais longas
+    bio VARCHAR2(4000), 
     dataNasc DATE
 );
 
@@ -17,8 +16,8 @@ CREATE TABLE Obra (
     id NUMBER(10) NOT NULL,
     titulo VARCHAR2(100) NOT NULL,
     artista_id NUMBER(10) NOT NULL,
-    data_criacao DATE, -- Renomeado para evitar conflito com palavra reservada
-    descricao VARCHAR2(4000), -- Aumentei para descrições mais longas
+    data_criacao DATE, 
+    descricao VARCHAR2(4000), 
     tipo VARCHAR2(50)
 );
 
@@ -46,21 +45,21 @@ CREATE TABLE CompraObras (
     obra_id NUMBER(10) NOT NULL,
     comprador_id NUMBER(10) NOT NULL,
     id_vendedor NUMBER(10) NOT NULL,
-    valor NUMBER(10, 2) NOT NULL -- Usei NUMBER(10, 2) para valores monetários
+    valor NUMBER(10, 2) NOT NULL 
 );
 
 CREATE TABLE Feedback (
     id NUMBER(10) NOT NULL,
     visitante_id NUMBER(10) NOT NULL,
-    nota NUMBER(1) NOT NULL, -- Nota de 1 a 5, por exemplo
-    comentario VARCHAR2(4000) -- Aumentei para comentários mais longos
+    nota NUMBER(1) NOT NULL, 
+    comentario VARCHAR2(4000) 
 );
 
 CREATE TABLE Evento (
     id NUMBER(10) NOT NULL,
     nome VARCHAR2(100) NOT NULL,
-    data_evento DATE NOT NULL, -- Renomeado para evitar conflito com palavra reservada
-    local_evento VARCHAR2(100), -- Renomeado
+    data_evento DATE NOT NULL, 
+    local_evento VARCHAR2(100), 
     museu_id NUMBER(10) NOT NULL
 );
 
@@ -68,8 +67,6 @@ CREATE TABLE EventoParticipante (
     evento_id NUMBER(10) NOT NULL,
     visitante_id NUMBER(10) NOT NULL
 );
-
----
 
 -- Chaves Primárias
 ALTER TABLE Museu ADD PRIMARY KEY (id);
@@ -83,8 +80,6 @@ ALTER TABLE Feedback ADD PRIMARY KEY (id);
 ALTER TABLE Evento ADD PRIMARY KEY (id);
 ALTER TABLE EventoParticipante ADD PRIMARY KEY (evento_id, visitante_id);
 
----
-
 -- Chaves Estrangeiras
 ALTER TABLE Obra ADD FOREIGN KEY (artista_id) REFERENCES Artista(id);
 ALTER TABLE Ingresso ADD FOREIGN KEY (visitante_id) REFERENCES Visitante(id);
@@ -95,8 +90,6 @@ ALTER TABLE Feedback ADD FOREIGN KEY (visitante_id) REFERENCES Visitante(id);
 ALTER TABLE Evento ADD FOREIGN KEY (museu_id) REFERENCES Museu(id);
 ALTER TABLE EventoParticipante ADD FOREIGN KEY (evento_id) REFERENCES Evento(id);
 ALTER TABLE EventoParticipante ADD FOREIGN KEY (visitante_id) REFERENCES Visitante(id);
-
----
 
 -- Sequências para Auto-Incremento
 CREATE SEQUENCE museu_seq
