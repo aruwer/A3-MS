@@ -220,106 +220,62 @@ END;
 -- Relatório 1.1: Obras e Seus Artistas
 -- Objetivo: Listar cada obra com o nome do artista que a criou.
 -- Utilidade: Catalogação e exibição rápida das obras por autor.
-SELECT
-    o.titulo AS "Título da Obra",
-    a.nome AS "Nome do Artista"
-FROM
-    Obra o
-JOIN
-    Artista a ON o.artista_id = a.id;
+SELECT o.titulo AS "Título da Obra", a.nome AS "Nome do Artista"
+FROM Obra o
+JOIN Artista a ON o.artista_id = a.id;
 
 -- Relatório 1.2: Participantes em Eventos do Museu
 -- Objetivo: Listar todos os eventos e os nomes dos visitantes que participarão.
 -- Utilidade: Gestão de público, planejamento de recursos para eventos.
-SELECT
-    e.nome AS "Nome do Evento",
-    p.nome AS "Nome do Participante",
-    e.data_evento AS "Data do Evento"
-FROM
-    Evento e
-JOIN
-    EventoParticipante ep ON e.id = ep.evento_id
-JOIN
-    Visitante v ON ep.visitante_id = v.id
-JOIN
-    Pessoa p ON v.id = p.id;
+SELECT e.nome AS "Nome do Evento", p.nome AS "Nome do Participante", e.data_evento AS "Data do Evento"
+FROM Evento e
+JOIN EventoParticipante ep ON e.id = ep.evento_id
+JOIN Visitante v ON ep.visitante_id = v.id
+JOIN Pessoa p ON v.id = p.id;
 
 -- Relatório 1.3: Compras de Obras Detalhadas (Comprador e Vendedor)
 -- Objetivo: Apresentar todas as vendas de obras, incluindo título, valor, comprador e vendedor.
 -- Utilidade: Controle financeiro, análise de desempenho de vendas.
-SELECT
-    o.titulo AS "Obra Vendida",
-    cb.valor AS "Valor da Compra",
-    pv.nome AS "Nome do Comprador",
-    pf.nome AS "Nome do Vendedor"
-FROM
-    CompraObras cb
-JOIN
-    Obra o ON cb.obra_id = o.id
-JOIN
-    Visitante v ON cb.comprador_id = v.id
-JOIN
-    Pessoa pv ON v.id = pv.id
-JOIN
-    Funcionario f ON cb.id_vendedor = f.id
-JOIN
-    Pessoa pf ON f.id = pf.id;
+SELECT o.titulo AS "Obra Vendida", cb.valor AS "Valor da Compra", pv.nome AS "Nome do Comprador", pf.nome AS "Nome do Vendedor"
+FROM CompraObras cb
+JOIN Obra o ON cb.obra_id = o.id
+JOIN Visitante v ON cb.comprador_id = v.id
+JOIN Pessoa pv ON v.id = pv.id
+JOIN Funcionario f ON cb.id_vendedor = f.id
+JOIN Pessoa pf ON f.id = pf.id;
 
 -- 18. FUNÇÕES DE GRUPO GROUP BY E HAVING
 
 -- Relatório 2.1: Contagem de Obras por Artista
 -- Objetivo: Mostrar quantas obras cada artista possui no acervo do museu.
 -- Utilidade: Identificar artistas com maior representatividade no acervo.
-SELECT
-    a.nome AS "Artista",
-    COUNT(o.id) AS "Total de Obras"
-FROM
-    Artista a
-JOIN
-    Obra o ON a.id = o.artista_id
-GROUP BY
-    a.nome
-ORDER BY
-    "Total de Obras" DESC;
+SELECT a.nome AS "Artista", COUNT(o.id) AS "Total de Obras"
+FROM Artista a
+JOIN Obra o ON a.id = o.artista_id
+GROUP BY a.nome
+ORDER BY "Total de Obras" DESC;
 
 -- Relatório 2.2: Média de Notas de Feedback por Visitante (com múltiplos feedbacks)
 -- Objetivo: Calcular a nota média dos feedbacks de visitantes que deram mais de um feedback.
 -- Utilidade: Avaliar a satisfação de visitantes mais engajados e identificar tendências.
-SELECT
-    p.nome AS "Visitante",
-    AVG(f.nota) AS "Nota Média de Feedback",
-    COUNT(f.id) AS "Total de Feedbacks"
-FROM
-    Feedback f
-JOIN
-    Visitante v ON f.visitante_id = v.id
-JOIN
-    Pessoa p ON v.id = p.id
-GROUP BY
-    p.nome
-HAVING
-    COUNT(f.id) > 1
-ORDER BY
-    "Nota Média de Feedback" DESC;
+SELECT p.nome AS "Visitante", AVG(f.nota) AS "Nota Média de Feedback", COUNT(f.id) AS "Total de Feedbacks"
+FROM Feedback f
+JOIN Visitante v ON f.visitante_id = v.id
+JOIN Pessoa p ON v.id = p.id
+GROUP BY p.nome
+HAVING COUNT(f.id) > 1
+ORDER BY "Nota Média de Feedback" DESC;
 
 -- Relatório 2.3: Total de Vendas por Funcionário (Vendedor)
 -- Objetivo: Somar o valor total das obras vendidas por cada funcionário.
 -- Utilidade: Avaliar o desempenho individual da equipe de vendas.
-SELECT
-    p.nome AS "Nome do Vendedor",
-    SUM(cb.valor) AS "Total Vendido"
-FROM
-    CompraObras cb
-JOIN
-    Funcionario f ON cb.id_vendedor = f.id
-JOIN
-    Pessoa p ON f.id = p.id
-GROUP BY
-    p.nome
-HAVING
-    SUM(cb.valor) > 0
-ORDER BY
-    "Total Vendido" DESC;
+SELECT p.nome AS "Nome do Vendedor", SUM(cb.valor) AS "Total Vendido"
+FROM CompraObras cb
+JOIN Funcionario f ON cb.id_vendedor = f.id
+JOIN Pessoa p ON f.id = p.id
+GROUP BY p.nome
+HAVING SUM(cb.valor) > 0
+ORDER BY "Total Vendido" DESC;
 
 ---
 
@@ -328,62 +284,37 @@ ORDER BY
 -- Relatório 3.1: Obras Vendidas Acima da Média Geral de Vendas
 -- Objetivo: Listar obras que foram vendidas por um valor superior à média de todas as vendas.
 -- Utilidade: Identificar obras de alto valor e tendências de mercado.
-SELECT
-    o.titulo AS "Título da Obra",
-    cb.valor AS "Valor de Venda"
-FROM
-    Obra o
-JOIN
-    CompraObras cb ON o.id = cb.obra_id
-WHERE
-    cb.valor > (SELECT AVG(valor) FROM CompraObras);
+SELECT o.titulo AS "Título da Obra", cb.valor AS "Valor de Venda"
+FROM Obra o
+JOIN CompraObras cb ON o.id = cb.obra_id
+WHERE cb.valor > (SELECT AVG(valor) FROM CompraObras);
 
 -- Relatório 3.2: Visitantes que Participaram de Eventos de um Museu Específico
 -- Objetivo: Mostrar os nomes dos visitantes que estiveram em eventos de um museu nomeado.
 -- Utilidade: Análise de público por museu, campanhas de marketing direcionadas.
-SELECT
-    p.nome AS "Nome do Visitante",
-    p.contato AS "Contato do Visitante"
-FROM
-    Pessoa p
-JOIN
-    Visitante v ON p.id = v.id
-WHERE
-    v.id IN (
-        SELECT
-            ep.visitante_id
-        FROM
-            EventoParticipante ep
-        JOIN
-            Evento e ON ep.evento_id = e.id
-        JOIN
-            Museu m ON e.museu_id = m.id
-        WHERE
-            m.nome = 'Museu de Arte Moderna' 
+SELECT p.nome AS "Nome do Visitante", p.contato AS "Contato do Visitante"
+FROM Pessoa p
+JOIN Visitante v ON p.id = v.id
+WHERE v.id IN (
+        SELECT ep.visitante_id
+        FROM EventoParticipante ep
+        JOIN Evento e ON ep.evento_id = e.id
+        JOIN Museu m ON e.museu_id = m.id
+        WHERE m.nome = 'Museu de Arte Moderna' 
     );
 
 -- Relatório 3.3: Funcionários que Venderam Obras de Artistas Específicos
 -- Objetivo: Listar funcionários que atuaram como vendedores de obras de um artista particular.
 -- Utilidade: Rastreamento de vendas, identificação de especialistas em certos tipos de arte.
-SELECT
-    p.nome AS "Nome do Vendedor",
-    p.contato AS "Contato do Vendedor"
-FROM
-    Pessoa p
-JOIN
-    Funcionario f ON p.id = f.id
-WHERE
-    f.id IN (
-        SELECT
-            cb.id_vendedor
-        FROM
-            CompraObras cb
-        JOIN
-            Obra o ON cb.obra_id = o.id
-        JOIN
-            Artista a ON o.artista_id = a.id
-        WHERE
-            a.nome = 'Leonardo da Vinci'
+SELECT p.nome AS "Nome do Vendedor", p.contato AS "Contato do Vendedor"
+FROM Pessoa p
+JOIN Funcionario f ON p.id = f.id
+WHERE f.id IN (
+        SELECT cb.id_vendedor
+        FROM CompraObras cb
+        JOIN Obra o ON cb.obra_id = o.id
+        JOIN Artista a ON o.artista_id = a.id
+        WHERE a.nome = 'Leonardo da Vinci'
     );
 
 ---
